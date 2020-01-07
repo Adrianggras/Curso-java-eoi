@@ -1,3 +1,3 @@
 # Curso-java-eoi
 
-Por favor, solo alumnos de EOI
+Proyectos Java del curso de Java y Full-Stack de la Escuela de Organización Industrial
