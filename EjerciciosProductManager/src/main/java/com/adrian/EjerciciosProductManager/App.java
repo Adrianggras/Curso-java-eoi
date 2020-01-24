@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class App {
@@ -39,19 +40,49 @@ public class App {
 		}
 	}
 
-	public static void selectFormateado() {
+	public static void categorias() {
 
-		String format = "%4d - %4.4s %-25.25s: %5.2f€\n";
-		String sql = "select * from product";
+		System.out.println("Selecciona la categoría que deseas eliminar");
+		String x = "";
+		int id;
+		int y;
+
+		boolean bucle = true;
+
+		ArrayList<Integer> ids = new ArrayList<Integer>();
+
+		String format = "%4d - %-20.20s\n";
+		String sql = "select * from category";
 
 		try (ResultSet rs = st.executeQuery(sql)) {
 
 			while (rs.next()) {
-				System.out.printf(format, rs.getInt("id"), rs.getString("reference"), rs.getString("name"),
-						rs.getDouble("price"));
+				ids.add(rs.getInt("id"));
+				System.out.printf(format, rs.getInt("id"), rs.getString("name"));
 			}
 		} catch (SQLException ex) {
 			System.err.println(ex.getMessage());
+		}
+
+		try {
+			y = Integer.parseInt(x);
+
+			while (bucle) {
+				
+				for (int element : ids) {
+					
+					if (y == element) {
+						id = y;
+					} else {
+						System.out.println("Selecciona un número válido");
+					}
+
+				}
+			}
+
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error. Escribe un número válido");
 		}
 
 	}
@@ -81,6 +112,22 @@ public class App {
 
 			pst2.executeUpdate();
 
+			conn.commit(); // Todo ok!
+		} catch (SQLException ex) {
+			System.err.println(ex.getMessage());
+			conn.rollback(); // Error!
+		}
+	}
+
+	private static void deleteProductosCategoria(String categoria) throws SQLException {
+
+		conn.setAutoCommit(false); // Desactivar el auto commit
+
+		String sql = "delete product from category where id = ?";
+		try {
+			pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			pst.setString(1, categoria);
+			pst.executeUpdate();
 			conn.commit(); // Todo ok!
 		} catch (SQLException ex) {
 			System.err.println(ex.getMessage());
@@ -130,8 +177,10 @@ public class App {
 	}
 
 	public static void main(String[] args) {
+
 		setUp();
-		insertCatProd();
+		// insertCatProd();
+		categorias();
 		tearDown();
 
 	}
